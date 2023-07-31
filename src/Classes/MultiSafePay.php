@@ -121,8 +121,6 @@ class MultiSafePay
 
     public static function getOrderStatus(OrderPayment $orderPayment)
     {
-        $siteId = Sites::getActive();
-
         $payment = Http::get('https://api.multisafepay.com/v1/json/orders/' . $orderPayment->psp_id, [
             'api_key' => Customsetting::get('multisafepay_api_key', $orderPayment->order->site_id),
         ])

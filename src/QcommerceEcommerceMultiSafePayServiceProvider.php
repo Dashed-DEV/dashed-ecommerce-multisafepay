@@ -6,15 +6,12 @@ use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Qubiqx\QcommerceEcommerceMultiSafePay\Commands\SyncMultiSafePayPaymentMethodsCommand;
 use Qubiqx\QcommerceEcommerceMultiSafePay\Filament\Pages\Settings\MultiSafePaySettingsPage;
-use Qubiqx\QcommerceEcommercePaynl\Classes\MultiSafePay;
-use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
-use Qubiqx\QcommerceEcommercePaynl\Commands\SyncPayNLPaymentMethodsCommand;
-use Qubiqx\QcommerceEcommercePaynl\Filament\Pages\Settings\PayNLSettingsPage;
+use Qubiqx\QcommerceEcommerceMultiSafePay\Classes\MultiSafePay;
 use Spatie\LaravelPackageTools\Package;
 
 class QcommerceEcommerceMultiSafePayServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'qcommerce-ecommerce-paynl';
+    public static string $name = 'qcommerce-ecommerce-multisafepay';
 
     public function bootingPackage()
     {

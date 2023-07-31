@@ -3,8 +3,7 @@
 namespace Qubiqx\QcommerceEcommerceMultiSafePay\Commands;
 
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceEcommercePaynl\Classes\MultiSafePay;
-use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
+use Qubiqx\QcommerceEcommerceMultiSafePay\Classes\MultiSafePay;
 
 class SyncMultiSafePayPaymentMethodsCommand extends Command
 {
