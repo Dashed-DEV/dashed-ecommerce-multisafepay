@@ -12,7 +12,8 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommercePaynl\Classes\PayNL;
+use Qubiqx\QcommerceEcommerceCore\Models\OrderPayment;
+use Qubiqx\QcommerceEcommerceMultiSafePay\Classes\MultiSafePay;
 
 class MultiSafePaySettingsPage extends Page implements HasForms
 {
@@ -25,13 +26,13 @@ class MultiSafePaySettingsPage extends Page implements HasForms
 
     public function mount(): void
     {
+        MultiSafePay::getOrderStatus(OrderPayment::latest()->first());
+//        MultiSafePay::syncPaymentMethods();
         $formData = [];
         $sites = Sites::getSites();
         foreach ($sites as $site) {
-            $formData["paynl_at_hash_{$site['id']}"] = Customsetting::get('paynl_at_hash', $site['id']);
-            $formData["paynl_sl_code_{$site['id']}"] = Customsetting::get('paynl_sl_code', $site['id']);
-            $formData["paynl_test_mode_{$site['id']}"] = Customsetting::get('paynl_test_mode', $site['id'], false) ? true : false;
-            $formData["paynl_connected_{$site['id']}"] = Customsetting::get('paynl_connected', $site['id']);
+            $formData["multisafepay_api_key_{$site['id']}"] = Customsetting::get('multisafepay_api_key', $site['id']);
+            $formData["multisafepay_connected_{$site['id']}"] = Customsetting::get('multisafepay_connected', $site['id']);
         }
 
         $this->form->fill($formData);
@@ -46,30 +47,23 @@ class MultiSafePaySettingsPage extends Page implements HasForms
         foreach ($sites as $site) {
             $schema = [
                 Placeholder::make('label')
-                    ->label("PayNL voor {$site['name']}")
+                    ->label("MultiSafePay voor {$site['name']}")
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
                 Placeholder::make('label')
-                    ->label("PayNL is " . (! Customsetting::get('paynl_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
-                    ->content(Customsetting::get('paynl_connection_error', $site['id'], ''))
+                    ->label("MultiSafePay is " . (! Customsetting::get('multisafepay_connected', $site['id'], 0) ? 'niet' : '') . ' geconnect')
+                    ->content(Customsetting::get('multisafepay_connection_error', $site['id'], ''))
                     ->columnSpan([
                         'default' => 1,
                         'lg' => 2,
                     ]),
-                TextInput::make("paynl_at_hash_{$site['id']}")
-                    ->label('PayNL AT hash')
+                TextInput::make("multisafepay_api_key_{$site['id']}")
+                    ->label('MultiSafePay API key')
                     ->rules([
                         'max:255',
                     ]),
-                TextInput::make("paynl_sl_code_{$site['id']}")
-                    ->label('PayNL SL code')
-                    ->rules([
-                        'max:255',
-                    ]),
-                Toggle::make("paynl_test_mode_{$site['id']}")
-                    ->label('Testmodus activeren'),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -91,18 +85,16 @@ class MultiSafePaySettingsPage extends Page implements HasForms
         $sites = Sites::getSites();
 
         foreach ($sites as $site) {
-            Customsetting::set('paynl_at_hash', $this->form->getState()["paynl_at_hash_{$site['id']}"], $site['id']);
-            Customsetting::set('paynl_sl_code', $this->form->getState()["paynl_sl_code_{$site['id']}"], $site['id']);
-            Customsetting::set('paynl_test_mode', $this->form->getState()["paynl_test_mode_{$site['id']}"], $site['id']);
-            Customsetting::set('paynl_connected', PayNL::isConnected($site['id']), $site['id']);
+            Customsetting::set('multisafepay_api_key', $this->form->getState()["multisafepay_api_key_{$site['id']}"], $site['id']);
+            Customsetting::set('multisafepay_connected', MultiSafePay::isConnected($site['id']), $site['id']);
 
-            if (Customsetting::get('paynl_connected', $site['id'])) {
-                PayNL::syncPaymentMethods($site['id']);
+            if (Customsetting::get('multisafepay_connected', $site['id'])) {
+                MultiSafePay::syncPaymentMethods($site['id']);
             }
         }
 
-        $this->notify('success', 'De PayNL instellingen zijn opgeslagen');
+        $this->notify('success', 'De MultiSafePay instellingen zijn opgeslagen');
 
-        return redirect(PayNLSettingsPage::getUrl());
+        return redirect(MultiSafePaySettingsPage::getUrl());
     }
 }

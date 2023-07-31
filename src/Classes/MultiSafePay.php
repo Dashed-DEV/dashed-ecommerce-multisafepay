@@ -1,9 +1,11 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommercePaynl\Classes;
+namespace Qubiqx\QcommerceEcommerceMultiSafePay\Classes;
 
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use MultiSafepay\Api\TransactionManager;
 use Qubiqx\QcommerceCore\Classes\Locales;
 use Qubiqx\QcommerceCore\Classes\Sites;
 use Qubiqx\QcommerceCore\Models\Customsetting;
@@ -14,28 +16,29 @@ use Qubiqx\QcommerceTranslations\Models\Translation;
 
 class MultiSafePay
 {
-    public static function initialize($siteId = null)
-    {
-        if (! $siteId) {
-            $siteId = Sites::getActive();
-        }
+    public $manager;
 
-        \Paynl\Config::setApiToken(Customsetting::get('paynl_at_hash', $siteId));
-        \Paynl\Config::setServiceId(Customsetting::get('paynl_sl_code', $siteId));
-    }
+//    public static function initialize($siteId = null)
+//    {
+//        if (! $siteId) {
+//            $siteId = Sites::getActive();
+//        }
+//
+//        \Paynl\Config::setApiToken(Customsetting::get('paynl_at_hash', $siteId));
+//        \Paynl\Config::setServiceId(Customsetting::get('paynl_sl_code', $siteId));
+//    }
 
     public static function isConnected($siteId = null)
     {
-        if (! $siteId) {
+        if (!$siteId) {
             $siteId = Sites::getActive();
         }
 
-        self::initialize($siteId);
-
         try {
-            $paymentMethods = \Paynl\Paymentmethods::getList();
-
-            return true;
+            return Http::get('https://api.multisafepay.com/v1/json/payment-methods', [
+                'api_key' => Customsetting::get('multisafepay_api_key', $siteId),
+            ])
+                ->json()['success'] ?? false;
         } catch (\Exception $e) {
             return false;
         }
@@ -45,32 +48,33 @@ class MultiSafePay
     {
         $site = Sites::get($siteId);
 
-        self::initialize($siteId);
-
-        if (! Customsetting::get('paynl_connected', $site['id'])) {
+        if (!Customsetting::get('multisafepay_connected', $site['id'])) {
             return;
         }
 
         try {
-            $allPaymentMethods = \Paynl\Paymentmethods::getList();
+            $allPaymentMethods = Http::get('https://api.multisafepay.com/v1/json/payment-methods', [
+                'api_key' => Customsetting::get('multisafepay_api_key', $site['id']),
+            ])
+                ->json()['data'] ?? [];
         } catch (Exception $exception) {
             $allPaymentMethods = [];
         }
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
-            if (! PaymentMethod::where('psp', 'paynl')->where('psp_id', $allPaymentMethod['id'])->count()) {
-                $image = file_get_contents('https://static.pay.nl/' . $allPaymentMethod['brand']['image']);
-                $imagePath = '/qcommerce/payment-methods/' . $allPaymentMethod['id'] . '.png';
+            if (!PaymentMethod::where('psp', 'multisafepay')->where('psp_id', $allPaymentMethod['id'])->count()) {
+                $image = file_get_contents($allPaymentMethod['icon_urls']['large']);
+                $imagePath = '/qcommerce/payment-methods/multisafepay/' . $allPaymentMethod['id'] . '.png';
                 Storage::put($imagePath, $image);
 
                 $paymentMethod = new PaymentMethod();
                 $paymentMethod->site_id = $site['id'];
-                $paymentMethod->available_from_amount = $allPaymentMethod['min_amount'] ?: 0;
-                $paymentMethod->psp = 'paynl';
+                $paymentMethod->available_from_amount = $allPaymentMethod['allowed_amount']['min'] ?? 0;
+                $paymentMethod->psp = 'multisafepay';
                 $paymentMethod->psp_id = $allPaymentMethod['id'];
                 $paymentMethod->image = $imagePath;
                 foreach (Locales::getLocales() as $locale) {
-                    $paymentMethod->setTranslation('name', $locale['id'], $allPaymentMethod['visibleName']);
+                    $paymentMethod->setTranslation('name', $locale['id'], $allPaymentMethod['name']);
                 }
                 $paymentMethod->save();
             }
@@ -79,92 +83,58 @@ class MultiSafePay
 
     public static function startTransaction(OrderPayment $orderPayment)
     {
-        $orderPayment->psp = 'paynl';
+        $orderPayment->psp = 'multisafepay';
         $orderPayment->save();
 
         $siteId = Sites::getActive();
 
-        self::initialize($siteId);
-
-        $paynlProducts = [];
-        foreach ($orderPayment->order->orderProducts as $orderProduct) {
-            array_push(
-                $paynlProducts,
-                [
-                    'id' => $orderProduct->sku,
-                    'name' => $orderProduct->name,
-                    'price' => $orderProduct->price,
-                    'qty' => $orderProduct->quantity,
-                    'vatPercentage' => $orderProduct->vat_rate,
-                    'type' => \Paynl\Transaction::PRODUCT_TYPE_ARTICLE,
+        $transaction = Http::withHeaders([
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+        ])
+            ->post('https://api.multisafepay.com/v1/json/orders?api_key=' . Customsetting::get('multisafepay_api_key', $siteId), [
+                'type' => 'redirect',
+                'gateway' => $orderPayment->paymentMethod->psp_id,
+                'order_id' => $orderPayment->order->hash,
+                'currency' => 'EUR',
+                'amount' => $orderPayment->amount * 100,
+                'description' => Translation::get('order-by-store', 'orders', 'Order by :storeName:', 'text', [
+                    'storeName' => Customsetting::get('site_name'),
+                ]),
+                'payment_options' => [
+                    'notification_method' => 'POST',
+                    'notification_url' => route('qcommerce.frontend.checkout.exchange'),
+                    'redirect_url' => route('qcommerce.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
+                    'cancel_url' => url('/')
                 ]
-            );
-        }
+            ])
+            ->json();
 
-        $result = \Paynl\Transaction::start([
-            'amount' => number_format($orderPayment->amount, 2, '.', ''),
-            'returnUrl' => route('qcommerce.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
-            'ipaddress' => request()->ip(),
-            'paymentMethod' => $orderPayment->paymentMethod->psp_id,
-            'currency' => 'EUR',
-            'testmode' => Customsetting::get('paynl_test_mode', $siteId, false) ? true : false,
-
-            'exchangeUrl' => route('qcommerce.frontend.checkout.exchange'),
-            'description' => Translation::get('order-by-store', 'orders', 'Order by :storeName:', 'text', [
-                'storeName' => Customsetting::get('site_name'),
-            ]),
-            'orderNumber' => $orderPayment->order->id,
-            'products' => $paynlProducts,
-            'invoiceDate' => $orderPayment->order->created_at,
-            'enduser' => [
-                'firstName' => $orderPayment->order->first_name,
-                'lastName' => $orderPayment->order->last_name,
-                'phoneNumber' => $orderPayment->order->phone_number,
-                'emailAddress' => $orderPayment->order->email,
-                'initials' => $orderPayment->order->initials,
-                'gender' => $orderPayment->order->gender,
-                'dob' => $orderPayment->order->date_of_birth,
-            ],
-            'address' => [
-                'streetName' => $orderPayment->order->street ?: '',
-                'houseNumber' => $orderPayment->order->house_nr ?: '',
-                'zipCode' => $orderPayment->order->zip_code ?: '',
-                'city' => $orderPayment->order->city ?: '',
-                'country' => Countries::getCountryIsoCode($orderPayment->order->country) ?? '',
-            ],
-            'invoiceAddress' => [
-                'initials' => $orderPayment->order->initials,
-                'lastName' => $orderPayment->order->last_name,
-                'streetName' => $orderPayment->order->invoice_street ?: $orderPayment->order->street,
-                'houseNumber' => $orderPayment->order->invoice_house_nr ?: $orderPayment->order->house_nr,
-                'zipCode' => $orderPayment->order->invoice_zip_code ?: $orderPayment->order->zip_code,
-                'city' => $orderPayment->order->invoice_city ?: $orderPayment->order->city,
-                'country' => Countries::getCountryIsoCode($orderPayment->order->invoice_country ?: $orderPayment->order->country),
-            ],
-        ]);
-
-        $orderPayment->psp_id = $result->getTransactionId();
+        $orderPayment->psp_id = $transaction['data']['order_id'];
         $orderPayment->save();
 
         return [
-            'transaction' => $result,
-            'redirectUrl' => $result->getRedirectUrl(),
+            'transaction' => $transaction,
+            'redirectUrl' => $transaction['data']['payment_url'],
         ];
     }
 
     public static function getOrderStatus(OrderPayment $orderPayment)
     {
-        $site = Sites::getActive();
+        $siteId = Sites::getActive();
 
-        self::initialize($site);
+        $payment = Http::get('https://api.multisafepay.com/v1/json/orders/' . $orderPayment->psp_id, [
+            'api_key' => Customsetting::get('multisafepay_api_key', $orderPayment->order->site_id),
+        ])
+            ->json();
 
-        $payment = \Paynl\Transaction::get($orderPayment->psp_id);
+        $paymentStatus = $payment['data']['status'] ?? 'pending';
 
-        if ($payment->isPaid()) {
+        if ($paymentStatus == 'completed') {
             return 'paid';
-        } elseif ($payment->isRefunded(true)) {
+        } elseif ($paymentStatus == 'refunded') {
             return 'refunded';
-        } elseif ($payment->isCancelled()) {
+        } elseif ($paymentStatus == 'cancelled') {
             return 'cancelled';
         } else {
             return 'pending';
