@@ -1,0 +1,69 @@
+{
+    "name": "qubiqx/qcommerce-ecommerce-multisafepay",
+    "description": "This is my package qcommerce-ecommerce-multisafepay",
+    "keywords": [
+        "Qubiqx",
+        "laravel",
+        "qcommerce-ecommerce-multisafepay"
+    ],
+    "homepage": "https://github.com/qubiqx/qcommerce-ecommerce-multisafepay",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Robin van Maasakker",
+            "email": "robin@qubiqx.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "http-interop/http-factory-guzzle": "^1.2",
+        "multisafepay/laravel-api": "^1.1",
+        "psr/http-client": "^1.0",
+        "spatie/laravel-package-tools": "^1.15",
+        "symfony/http-client": "^6.3"
+    },
+    "require-dev": {
+        "nunomaduro/collision": "^7.0",
+        "orchestra/testbench": "^8.5",
+        "pestphp/pest": "^2.8",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpunit/phpunit": "^10.2",
+        "spatie/laravel-ray": "^1.32"
+    },
+    "autoload": {
+        "psr-4": {
+            "Qubiqx\\QcommerceEcommerceMultiSafePay\\": "src",
+            "Qubiqx\\QcommerceEcommerceMultiSafePay\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Qubiqx\\QcommerceEcommerceMultiSafePay\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest coverage"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Qubiqx\\QcommerceEcommerceMultiSafePay\\QcommerceEcommerceMultiSafePayServiceProvider"
+            ],
+            "aliases": {
+                "QcommerceEcommerceMultiSafePay": "Qubiqx\\QcommerceEcommerceMultiSafePay\\Facades\\QcommerceEcommerceMultiSafePay"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
