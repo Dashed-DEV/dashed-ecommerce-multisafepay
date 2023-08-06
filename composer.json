@@ -1,17 +1,17 @@
 {
-    "name": "qubiqx/qcommerce-ecommerce-multisafepay",
-    "description": "This is my package qcommerce-ecommerce-multisafepay",
+    "name": "dashed/dashed-ecommerce-multisafepay",
+    "description": "This is my package dashed-ecommerce-multisafepay",
     "keywords": [
-        "Qubiqx",
+        "Dashed",
         "laravel",
-        "qcommerce-ecommerce-multisafepay"
+        "dashed-ecommerce-multisafepay"
     ],
-    "homepage": "https://github.com/qubiqx/qcommerce-ecommerce-multisafepay",
+    "homepage": "https://github.com/Dashed-DEV/dashed-ecommerce-multisafepay",
     "license": "MIT",
     "authors": [
         {
             "name": "Robin van Maasakker",
-            "email": "robin@qubiqx.com",
+            "email": "robin@dashed.nl",
             "role": "Developer"
         }
     ],
@@ -33,13 +33,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Qubiqx\\QcommerceEcommerceMultiSafePay\\": "src",
-            "Qubiqx\\QcommerceEcommerceMultiSafePay\\Database\\Factories\\": "database/factories"
+            "Dashed\\DashedEcommerceMultiSafePay\\": "src",
+            "Dashed\\DashedEcommerceMultiSafePay\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Qubiqx\\QcommerceEcommerceMultiSafePay\\Tests\\": "tests"
+            "Dashed\\DashedEcommerceMultiSafePay\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -57,10 +57,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Qubiqx\\QcommerceEcommerceMultiSafePay\\QcommerceEcommerceMultiSafePayServiceProvider"
+                "Dashed\\DashedEcommerceMultiSafePay\\DashedEcommerceMultiSafePayServiceProvider"
             ],
             "aliases": {
-                "QcommerceEcommerceMultiSafePay": "Qubiqx\\QcommerceEcommerceMultiSafePay\\Facades\\QcommerceEcommerceMultiSafePay"
+                "DashedEcommerceMultiSafePay": "Dashed\\DashedEcommerceMultiSafePay\\Facades\\DashedEcommerceMultiSafePay"
             }
         }
     },

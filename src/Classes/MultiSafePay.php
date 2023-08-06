@@ -1,18 +1,18 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMultiSafePay\Classes;
+namespace Dashed\DashedEcommerceMultiSafePay\Classes;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use MultiSafepay\Api\TransactionManager;
-use Qubiqx\QcommerceCore\Classes\Locales;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommerceCore\Classes\Countries;
-use Qubiqx\QcommerceEcommerceCore\Models\OrderPayment;
-use Qubiqx\QcommerceEcommerceCore\Models\PaymentMethod;
-use Qubiqx\QcommerceTranslations\Models\Translation;
+use Dashed\DashedCore\Classes\Locales;
+use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedEcommerceCore\Classes\Countries;
+use Dashed\DashedEcommerceCore\Models\OrderPayment;
+use Dashed\DashedEcommerceCore\Models\PaymentMethod;
+use Dashed\DashedTranslations\Models\Translation;
 
 class MultiSafePay
 {
@@ -64,7 +64,7 @@ class MultiSafePay
         foreach ($allPaymentMethods as $allPaymentMethod) {
             if (!PaymentMethod::where('psp', 'multisafepay')->where('psp_id', $allPaymentMethod['id'])->count()) {
                 $image = file_get_contents($allPaymentMethod['icon_urls']['large']);
-                $imagePath = '/qcommerce/payment-methods/multisafepay/' . $allPaymentMethod['id'] . '.png';
+                $imagePath = '/dashed/payment-methods/multisafepay/' . $allPaymentMethod['id'] . '.png';
                 Storage::put($imagePath, $image);
 
                 $paymentMethod = new PaymentMethod();
@@ -103,8 +103,8 @@ class MultiSafePay
                 ]),
                 'payment_options' => [
                     'notification_method' => 'POST',
-                    'notification_url' => route('qcommerce.frontend.checkout.exchange'),
-                    'redirect_url' => route('qcommerce.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
+                    'notification_url' => route('dashed.frontend.checkout.exchange'),
+                    'redirect_url' => route('dashed.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
                     'cancel_url' => url('/')
                 ]
             ])

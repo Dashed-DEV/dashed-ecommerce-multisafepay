@@ -1,6 +1,6 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMultiSafePay\Filament\Pages\Settings;
+namespace Dashed\DashedEcommerceMultiSafePay\Filament\Pages\Settings;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
@@ -10,10 +10,10 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-use Qubiqx\QcommerceCore\Classes\Sites;
-use Qubiqx\QcommerceCore\Models\Customsetting;
-use Qubiqx\QcommerceEcommerceCore\Models\OrderPayment;
-use Qubiqx\QcommerceEcommerceMultiSafePay\Classes\MultiSafePay;
+use Dashed\DashedCore\Classes\Sites;
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedEcommerceCore\Models\OrderPayment;
+use Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay;
 
 class MultiSafePaySettingsPage extends Page implements HasForms
 {
@@ -22,7 +22,7 @@ class MultiSafePaySettingsPage extends Page implements HasForms
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = 'MultiSafePay';
 
-    protected static string $view = 'qcommerce-core::settings.pages.default-settings';
+    protected static string $view = 'dashed-core::settings.pages.default-settings';
 
     public function mount(): void
     {

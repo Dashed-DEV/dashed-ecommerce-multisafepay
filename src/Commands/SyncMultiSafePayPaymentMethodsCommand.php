@@ -1,9 +1,9 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMultiSafePay\Commands;
+namespace Dashed\DashedEcommerceMultiSafePay\Commands;
 
 use Illuminate\Console\Command;
-use Qubiqx\QcommerceEcommerceMultiSafePay\Classes\MultiSafePay;
+use Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay;
 
 class SyncMultiSafePayPaymentMethodsCommand extends Command
 {
@@ -12,7 +12,7 @@ class SyncMultiSafePayPaymentMethodsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'qcommerce:sync-multisafepay-payment-methods';
+    protected $signature = 'dashed:sync-multisafepay-payment-methods';
 
     /**
      * The console command description.

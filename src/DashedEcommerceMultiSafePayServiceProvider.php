@@ -1,17 +1,17 @@
 <?php
 
-namespace Qubiqx\QcommerceEcommerceMultiSafePay;
+namespace Dashed\DashedEcommerceMultiSafePay;
 
 use Filament\PluginServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
-use Qubiqx\QcommerceEcommerceMultiSafePay\Commands\SyncMultiSafePayPaymentMethodsCommand;
-use Qubiqx\QcommerceEcommerceMultiSafePay\Filament\Pages\Settings\MultiSafePaySettingsPage;
-use Qubiqx\QcommerceEcommerceMultiSafePay\Classes\MultiSafePay;
+use Dashed\DashedEcommerceMultiSafePay\Commands\SyncMultiSafePayPaymentMethodsCommand;
+use Dashed\DashedEcommerceMultiSafePay\Filament\Pages\Settings\MultiSafePaySettingsPage;
+use Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay;
 use Spatie\LaravelPackageTools\Package;
 
-class QcommerceEcommerceMultiSafePayServiceProvider extends PluginServiceProvider
+class DashedEcommerceMultiSafePayServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'qcommerce-ecommerce-multisafepay';
+    public static string $name = 'dashed-ecommerce-multisafepay';
 
     public function bootingPackage()
     {
@@ -46,7 +46,7 @@ class QcommerceEcommerceMultiSafePayServiceProvider extends PluginServiceProvide
         );
 
         $package
-            ->name('qcommerce-ecommerce-multisafepay')
+            ->name('dashed-ecommerce-multisafepay')
             ->hasCommands([
                 SyncMultiSafePayPaymentMethodsCommand::class,
             ]);
