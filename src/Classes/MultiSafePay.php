@@ -3,30 +3,28 @@
 namespace Dashed\DashedEcommerceMultiSafePay\Classes;
 
 use Exception;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
-use MultiSafepay\Api\TransactionManager;
-use Dashed\DashedCore\Classes\Locales;
 use Dashed\DashedCore\Classes\Sites;
+use Illuminate\Support\Facades\Http;
+use Dashed\DashedCore\Classes\Locales;
+use Illuminate\Support\Facades\Storage;
 use Dashed\DashedCore\Models\Customsetting;
-use Dashed\DashedEcommerceCore\Classes\Countries;
+use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
-use Dashed\DashedTranslations\Models\Translation;
 
 class MultiSafePay
 {
     public $manager;
 
-//    public static function initialize($siteId = null)
-//    {
-//        if (! $siteId) {
-//            $siteId = Sites::getActive();
-//        }
-//
-//        \Paynl\Config::setApiToken(Customsetting::get('paynl_at_hash', $siteId));
-//        \Paynl\Config::setServiceId(Customsetting::get('paynl_sl_code', $siteId));
-//    }
+    //    public static function initialize($siteId = null)
+    //    {
+    //        if (! $siteId) {
+    //            $siteId = Sites::getActive();
+    //        }
+    //
+    //        \Paynl\Config::setApiToken(Customsetting::get('paynl_at_hash', $siteId));
+    //        \Paynl\Config::setServiceId(Customsetting::get('paynl_sl_code', $siteId));
+    //    }
 
     public static function isConnected($siteId = null)
     {

@@ -2,14 +2,14 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay;
 
-use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay;
 use Dashed\DashedEcommerceMultiSafePay\Commands\SyncMultiSafePayPaymentMethodsCommand;
 use Dashed\DashedEcommerceMultiSafePay\Filament\Pages\Settings\MultiSafePaySettingsPage;
-use Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay;
-use Spatie\LaravelPackageTools\Package;
 
-class DashedEcommerceMultiSafePayServiceProvider extends PluginServiceProvider
+class DashedEcommerceMultiSafePayServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'dashed-ecommerce-multisafepay';
 
@@ -29,7 +29,7 @@ class DashedEcommerceMultiSafePayServiceProvider extends PluginServiceProvider
                 'multisafepay' => [
                     'name' => 'MultiSafePay',
                     'description' => 'Link MultiSafePay aan je webshop',
-                    'icon' => 'cash',
+                    'icon' => 'banknotes',
                     'page' => MultiSafePaySettingsPage::class,
                 ],
             ])
@@ -50,12 +50,5 @@ class DashedEcommerceMultiSafePayServiceProvider extends PluginServiceProvider
             ->hasCommands([
                 SyncMultiSafePayPaymentMethodsCommand::class,
             ]);
-    }
-
-    protected function getPages(): array
-    {
-        return array_merge(parent::getPages(), [
-            MultiSafePaySettingsPage::class,
-        ]);
     }
 }

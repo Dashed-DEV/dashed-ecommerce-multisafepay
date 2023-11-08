@@ -2,8 +2,8 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Dashed\DashedEcommerceMultiSafePay\DashedEcommerceMultiSafePayServiceProvider;
 
 class TestCase extends Orchestra

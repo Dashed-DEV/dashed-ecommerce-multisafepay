@@ -2,32 +2,29 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay\Filament\Pages\Settings;
 
-use Filament\Forms\Components\Placeholder;
+use Filament\Pages\Page;
 use Filament\Forms\Components\Tabs;
+use Dashed\DashedCore\Classes\Sites;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Page;
-use Dashed\DashedCore\Classes\Sites;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\Placeholder;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
 use Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay;
 
-class MultiSafePaySettingsPage extends Page implements HasForms
+class MultiSafePaySettingsPage extends Page
 {
-    use InteractsWithForms;
-
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = 'MultiSafePay';
 
     protected static string $view = 'dashed-core::settings.pages.default-settings';
+    public array $data = [];
 
     public function mount(): void
     {
         MultiSafePay::getOrderStatus(OrderPayment::latest()->first());
-//        MultiSafePay::syncPaymentMethods();
+        //        MultiSafePay::syncPaymentMethods();
         $formData = [];
         $sites = Sites::getSites();
         foreach ($sites as $site) {
@@ -61,9 +58,7 @@ class MultiSafePaySettingsPage extends Page implements HasForms
                     ]),
                 TextInput::make("multisafepay_api_key_{$site['id']}")
                     ->label('MultiSafePay API key')
-                    ->rules([
-                        'max:255',
-                    ]),
+                    ->maxLength(255),
             ];
 
             $tabs[] = Tab::make($site['id'])
@@ -80,6 +75,11 @@ class MultiSafePaySettingsPage extends Page implements HasForms
         return $tabGroups;
     }
 
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
+    }
+
     public function submit()
     {
         $sites = Sites::getSites();
@@ -93,7 +93,10 @@ class MultiSafePaySettingsPage extends Page implements HasForms
             }
         }
 
-        $this->notify('success', 'De MultiSafePay instellingen zijn opgeslagen');
+        Notification::make()
+            ->title('De MultiSafePay instellingen zijn opgeslagen')
+            ->success()
+            ->send();
 
         return redirect(MultiSafePaySettingsPage::getUrl());
     }
