@@ -104,9 +104,26 @@ class MultiSafePay
                     'notification_url' => route('dashed.frontend.checkout.exchange'),
                     'redirect_url' => route('dashed.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
                     'cancel_url' => url('/')
+                ],
+                'customer' => [
+                    'ip_address' => request()->ip(),
+                    'email' => $orderPayment->order->user->email,
+                    'first_name' => $orderPayment->order->first_name,
+                    'last_name' => $orderPayment->order->last_name,
+                    'address1' => $orderPayment->order->street . ' ' . $orderPayment->order->house_number,
+                    'zip_code' => $orderPayment->order->zip_code,
+                    'city' => $orderPayment->order->city,
+                    'country' => $orderPayment->order->country,
+                    'phone' => $orderPayment->order->phone_number,
+                    'user_agent' => request()->userAgent(),
+                    'company_name' => $orderPayment->order->company_name,
                 ]
             ])
             ->json();
+
+//        if (!isset($transaction['data']['order_id'])) {
+//            dd($transaction);
+//        }
 
         $orderPayment->psp_id = $transaction['data']['order_id'];
         $orderPayment->save();
