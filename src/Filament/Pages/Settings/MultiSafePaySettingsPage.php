@@ -23,7 +23,7 @@ class MultiSafePaySettingsPage extends Page
 
     public function mount(): void
     {
-//        MultiSafePay::getOrderStatus(OrderPayment::latest()->first());
+        //        MultiSafePay::getOrderStatus(OrderPayment::latest()->first());
         //        MultiSafePay::syncPaymentMethods();
         $formData = [];
         $sites = Sites::getSites();
