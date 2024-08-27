@@ -28,7 +28,7 @@ class MultiSafePay
 
     public static function isConnected($siteId = null)
     {
-        if (!$siteId) {
+        if (! $siteId) {
             $siteId = Sites::getActive();
         }
 
@@ -46,7 +46,7 @@ class MultiSafePay
     {
         $site = Sites::get($siteId);
 
-        if (!Customsetting::get('multisafepay_connected', $site['id'])) {
+        if (! Customsetting::get('multisafepay_connected', $site['id'])) {
             return;
         }
 
@@ -60,7 +60,7 @@ class MultiSafePay
         }
 
         foreach ($allPaymentMethods as $allPaymentMethod) {
-            if (!PaymentMethod::where('psp', 'multisafepay')->where('psp_id', $allPaymentMethod['id'])->count()) {
+            if (! PaymentMethod::where('psp', 'multisafepay')->where('psp_id', $allPaymentMethod['id'])->count()) {
                 $image = file_get_contents($allPaymentMethod['icon_urls']['large']);
                 $imagePath = '/dashed/payment-methods/multisafepay/' . $allPaymentMethod['id'] . '.png';
                 Storage::put($imagePath, $image);
@@ -103,7 +103,7 @@ class MultiSafePay
                     'notification_method' => 'POST',
                     'notification_url' => route('dashed.frontend.checkout.exchange'),
                     'redirect_url' => route('dashed.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
-                    'cancel_url' => url('/')
+                    'cancel_url' => url('/'),
                 ],
                 'customer' => [
                     'ip_address' => request()->ip(),
@@ -117,7 +117,7 @@ class MultiSafePay
                     'phone' => $orderPayment->order->phone_number,
                     'user_agent' => request()->userAgent(),
                     'company_name' => $orderPayment->order->company_name,
-                ]
+                ],
             ])
             ->json();
 
