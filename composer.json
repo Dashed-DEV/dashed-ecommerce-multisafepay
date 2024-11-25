@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "http-interop/http-factory-guzzle": "^1.2",
         "multisafepay/laravel-api": "^1.2",
         "psr/http-client": "^1.0",
