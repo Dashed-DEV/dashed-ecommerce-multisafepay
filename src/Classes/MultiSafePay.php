@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay\Classes;
 
-use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Exception;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Http;
@@ -11,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
 
 class MultiSafePay
