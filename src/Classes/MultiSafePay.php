@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay\Classes;
 
+use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Exception;
 use Dashed\DashedCore\Classes\Sites;
 use Illuminate\Support\Facades\Http;
@@ -102,7 +103,7 @@ class MultiSafePay
                 'payment_options' => [
                     'notification_method' => 'POST',
                     'notification_url' => route('dashed.frontend.checkout.exchange'),
-                    'redirect_url' => route('dashed.frontend.checkout.complete') . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
+                    'redirect_url' => url(ShoppingCart::getCompleteUrl()) . '?orderId=' . $orderPayment->order->hash . '&paymentId=' . $orderPayment->hash,
                     'cancel_url' => url('/'),
                 ],
                 'customer' => [
