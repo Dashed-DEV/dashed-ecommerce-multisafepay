@@ -2,6 +2,7 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay;
 
+use Dashed\DashedCore\DashedCorePlugin;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -50,5 +51,9 @@ class DashedEcommerceMultiSafePayServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 SyncMultiSafePayPaymentMethodsCommand::class,
             ]);
+
+        cms()->builder('plugins', [
+            new DashedEcommerceMultisafepayPlugin(),
+        ]);
     }
 }
