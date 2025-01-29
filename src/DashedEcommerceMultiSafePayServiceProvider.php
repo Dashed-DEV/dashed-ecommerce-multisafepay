@@ -2,7 +2,6 @@
 
 namespace Dashed\DashedEcommerceMultiSafePay;
 
-use Dashed\DashedCore\DashedCorePlugin;
 use Spatie\LaravelPackageTools\Package;
 use Illuminate\Console\Scheduling\Schedule;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
