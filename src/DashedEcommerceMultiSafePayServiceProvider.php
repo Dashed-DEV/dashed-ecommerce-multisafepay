@@ -23,17 +23,7 @@ class DashedEcommerceMultiSafePayServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        cms()->builder(
-            'settingPages',
-            array_merge(cms()->builder('settingPages'), [
-                'multisafepay' => [
-                    'name' => 'MultiSafePay',
-                    'description' => 'Link MultiSafePay aan je webshop',
-                    'icon' => 'banknotes',
-                    'page' => MultiSafePaySettingsPage::class,
-                ],
-            ])
-        );
+        cms()->registerSettingsPage(MultiSafePaySettingsPage::class, 'MultiSafePay', 'banknotes', 'Link MultiSafePay aan je webshop');
 
         ecommerce()->builder(
             'paymentServiceProviders',
