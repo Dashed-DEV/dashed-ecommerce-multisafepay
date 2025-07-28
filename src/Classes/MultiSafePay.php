@@ -108,7 +108,7 @@ class MultiSafePay
                 ],
                 'customer' => [
                     'ip_address' => request()->ip(),
-                    'email' => $orderPayment->order->user->email,
+                    'email' => $orderPayment->order->user->email ?? $orderPayment->order->email,
                     'first_name' => $orderPayment->order->first_name,
                     'last_name' => $orderPayment->order->last_name,
                     'address1' => $orderPayment->order->street . ' ' . $orderPayment->order->house_number,
