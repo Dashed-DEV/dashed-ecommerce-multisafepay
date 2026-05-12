@@ -15,6 +15,13 @@ class DashedEcommerceMultiSafePayServiceProvider extends PackageServiceProvider
 
     public function bootingPackage()
     {
+        // Register the Multisafepay webhook event_id extractor so the
+        // EnsureWebhookIdempotency middleware can deduplicate retries.
+        app(\Dashed\DashedCore\Webhooks\WebhookEventIdResolver::class)->extend(
+            'multisafepay',
+            fn (\Illuminate\Http\Request $request) => (string) ($request->input('transactionid') ?? ''),
+        );
+
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
             $schedule->command(SyncMultiSafePayPaymentMethodsCommand::class)->daily();
