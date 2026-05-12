@@ -12,6 +12,7 @@ use Dashed\DashedTranslations\Models\Translation;
 use Dashed\DashedEcommerceCore\Models\OrderPayment;
 use Dashed\DashedEcommerceCore\Classes\ShoppingCart;
 use Dashed\DashedEcommerceCore\Models\PaymentMethod;
+use Dashed\DashedEcommerceCore\Classes\PaymentMethods;
 
 class MultiSafePay
 {
@@ -72,10 +73,13 @@ class MultiSafePay
                 $paymentMethod->psp = 'multisafepay';
                 $paymentMethod->psp_id = $allPaymentMethod['id'];
                 $paymentMethod->image = $imagePath;
+                $paymentMethod->active = false;
                 foreach (Locales::getLocales() as $locale) {
                     $paymentMethod->setTranslation('name', $locale['id'], $allPaymentMethod['name']);
                 }
                 $paymentMethod->save();
+
+                PaymentMethods::notifyAdminsOfNewPaymentMethod($paymentMethod);
             }
         }
     }
