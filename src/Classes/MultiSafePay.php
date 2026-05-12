@@ -16,6 +16,22 @@ use Dashed\DashedEcommerceCore\Classes\PaymentMethods;
 
 class MultiSafePay
 {
+    /**
+     * Lightweight health check for the IntegrationsDashboard. Verifies the
+     * Multisafepay API key is set — does NOT call the Multisafepay API on
+     * every dashboard render.
+     */
+    public static function healthCheck(?string $siteId = null): \Dashed\DashedCore\Integrations\IntegrationHealth
+    {
+        $apiKey = \Dashed\DashedCore\Models\Customsetting::get('multisafepay_api_key', $siteId);
+
+        if (empty($apiKey)) {
+            return \Dashed\DashedCore\Integrations\IntegrationHealth::misconfigured('API key ontbreekt');
+        }
+
+        return \Dashed\DashedCore\Integrations\IntegrationHealth::ok();
+    }
+
     public $manager;
 
     //    public static function initialize($siteId = null)

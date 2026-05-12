@@ -22,6 +22,16 @@ class DashedEcommerceMultiSafePayServiceProvider extends PackageServiceProvider
             fn (\Illuminate\Http\Request $request) => (string) ($request->input('transactionid') ?? ''),
         );
 
+        cms()->registerIntegration([
+            'slug' => 'multisafepay',
+            'label' => 'Multisafepay',
+            'icon' => 'heroicon-o-credit-card',
+            'category' => 'payment',
+            'settings_page' => \Dashed\DashedEcommerceMultiSafePay\Filament\Pages\Settings\MultiSafePaySettingsPage::class,
+            'health_check' => [\Dashed\DashedEcommerceMultiSafePay\Classes\MultiSafePay::class, 'healthCheck'],
+            'package' => 'dashed-ecommerce-multisafepay',
+        ]);
+
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
             $schedule->command(SyncMultiSafePayPaymentMethodsCommand::class)->daily();
