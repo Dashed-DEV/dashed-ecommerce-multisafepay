@@ -59,7 +59,7 @@ class MultiSafePaySettingsPage extends Page
                         'lg' => 2,
                     ]),
                 TextInput::make("multisafepay_api_key_{$site['id']}")
-                    ->label('MultiSafePay API key')
+                    ->label(__('MultiSafePay API key'))
                     ->maxLength(255),
             ];
 
@@ -92,7 +92,7 @@ class MultiSafePaySettingsPage extends Page
         }
 
         Notification::make()
-            ->title('De MultiSafePay instellingen zijn opgeslagen')
+            ->title(__('De MultiSafePay instellingen zijn opgeslagen'))
             ->success()
             ->send();
 
